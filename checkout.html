@@ -1,0 +1,356 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Checkout – Derma Radiance</title>
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@500&family=Open+Sans&display=swap" rel="stylesheet">
+  <!-- Font Awesome Link -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" crossorigin="anonymous" referrerpolicy="no-referrer" />
+  <style>
+    body {
+      font-family: 'Segoe UI', sans-serif;
+      background-color: #fffaf8;
+      margin: 0;
+      padding: 0;
+      color: #333;
+    }
+    header {
+      background-color: #d45a3e;
+      color: white;
+      padding: 1rem 2rem;
+      text-align: center;
+    }
+    .container {
+      max-width: 800px;
+      margin: 2rem auto;
+      padding: 2rem;
+      background: white;
+      border-radius: 12px;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.05);
+    }
+    h2 {
+      color: #d45a3e;
+      margin-top: 0;
+    }
+    input, select {
+      width: 100%;
+      padding: 0.75rem;
+      margin-bottom: 1rem;
+      border-radius: 8px;
+      border: 1px solid #ccc;
+    }
+    .btn {
+      background-color: #d45a3e;
+      color: white;
+      padding: 0.75rem 1.5rem;
+      border: none;
+      border-radius: 25px;
+      font-size: 1rem;
+      cursor: pointer;
+    }
+    .cart-item {
+      padding: 0.5rem 0;
+      border-bottom: 1px solid #eee;
+    }
+    .confirmation {
+      text-align: center;
+      padding: 2rem;
+      display: none;
+    }
+    .confirmation h2 {
+      color: #28a745;
+    }
+
+    /* Navigation Bar */
+.navbar {
+  background: #d45a3e;
+  color: white;
+  padding: 0.8rem 1.5rem;
+  position: sticky;
+  top: 0;
+  z-index: 10;
+}
+
+.nav-container {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  max-width: 1200px;
+  margin: auto;
+}
+
+.logo {
+  font-size: 1.5rem;
+  font-weight: bold;
+}
+
+.nav-links {
+  list-style: none;
+  display: flex;
+  gap: 1.5rem;
+}
+
+.nav-links a {
+  color: white;
+  text-decoration: none;
+  font-weight: 500;
+}
+
+.nav-links a:hover {
+  text-decoration: underline;
+}
+
+/* Mobile Styles */
+.menu-toggle {
+  display: none;
+}
+
+.menu-icon {
+  display: none;
+  font-size: 1.8rem;
+  cursor: pointer;
+}
+
+/* Responsive Nav */
+@media (max-width: 768px) {
+  .menu-icon {
+    display: block;
+  }
+
+  .nav-links {
+    position: absolute;
+    top: 100%;
+    left: 0;
+    width: 100%;
+    background: #d45a3e;
+    flex-direction: column;
+    gap: 1rem;
+    padding: 1rem 0;
+    display: none;
+  }
+
+  .menu-toggle:checked + .menu-icon + .nav-links {
+    display: flex;
+  }
+}
+
+footer {
+      background: #f3f3e6;
+      padding: 40px 20px;
+    }
+    .footer-container {
+      max-width: 1200px;
+      margin: auto;
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: space-between;
+    }
+    .footer-left, .footer-right {
+      flex: 1 1 300px;
+      margin-bottom: 20px;
+    }
+    .footer-left h2 {
+      font-family: 'Playfair Display', serif;
+      font-size: 32px;
+      margin-bottom: 20px;
+    }
+    .footer-left p, .footer-left a {
+      display: block;
+      margin-bottom: 8px;
+      color: #333;
+      text-decoration: none;
+    }
+    .social-icons {
+      display: flex;
+      gap: 15px;
+      margin-top: 10px;
+    }
+    .social-icons a {
+      color: #333;
+      font-size: 20px;
+      text-decoration: none;
+    }
+    .footer-right form {
+      display: grid;
+      gap: 10px;
+    }
+    .footer-right input, .footer-right textarea {
+      padding: 10px;
+      border: 1px solid #ccc;
+      border-radius: 6px;
+    }
+    .footer-right button {
+      padding: 10px;
+      background: #333;
+      color: #fff;
+      border: none;
+      border-radius: 6px;
+      cursor: pointer;
+    }
+    .copyright {
+      text-align: center;
+      padding: 20px;
+      font-size: 14px;
+      background: #f3f3e6;
+    }
+  </style>
+</head>
+<body>
+
+<nav class="navbar">
+  <div class="nav-container">
+    <div class="logo">Derma Radiance</div>
+    <input type="checkbox" id="menu-toggle" class="menu-toggle">
+    <label for="menu-toggle" class="menu-icon">&#9776;</label>
+    <ul class="nav-links">
+      <li><a href="index.html">Home</a></li>
+      <li><a href="products.html">Products</a></li>
+      <li><a href="#contact">Contact</a></li>
+    </ul>
+  </div>
+</nav>
+
+
+<div class="container" id="checkoutForm">
+  <h2>Selected Products</h2>
+  <div class="cart-items" id="cartItems"></div>
+
+  <h2>Shipping Details</h2>
+  <input type="text" id="name" placeholder="Full Name" required>
+  <input type="tel" id="phone" placeholder="Phone Number" required>
+  <input type="text" id="address" placeholder="Shipping Address" required>
+
+  <h2>Choose Payment Method</h2>
+  <select id="paymentMethod">
+    <option value="cod">Cash on Delivery</option>
+    <option value="online">Online Payment (Razorpay)</option>
+  </select>
+
+  <button class="btn" onclick="placeOrder()">Place Order</button>
+</div>
+
+<div class="container confirmation" id="confirmationScreen">
+  <h2>Thank you for your order!</h2>
+  <p>Your order has been placed successfully.</p>
+  <p>You will recive your shipment details through Whatsapp</p>
+  <p><strong>Order ID:</strong> <span id="orderIdDisplay"></span></p>
+  <p>NOTE: please note your order id</p>
+</div>
+<footer>
+  <div class="footer-container" id="appointment">
+    <div class="footer-left">
+      <h2>Derma Radiance</h2>
+      <p>+91 98180 69324</p>
+      <p>drmadhutanwarclinic@gmail.com</p>
+      <p>M10/24 DLF Phase 2, Gurugram, Haryana</p>
+      <br/>
+      <a href="#">Privacy Policy</a>
+      <a href="#">Accessibility Statement</a>
+      <a href="#">Terms & Conditions</a>
+      <a href="#">Refund Policy</a>
+      <div class="social-icons">
+        <a href="#"><i class="fab fa-instagram"></i></a>
+        <a href="#"><i class="fab fa-facebook"></i></a>
+        <a href="#"><i class="fab fa-youtube"></i></a>
+        <a href="#"><i class="fab fa-map"></i></a>
+      </div>
+    </div>
+    <div class="footer-right">
+      <h3>Book Your Appointment</h3>
+      <form>
+        <input type="text" placeholder="First name*" required>
+        <input type="text" placeholder="Last name">
+        <input type="email" placeholder="Email*" required>
+        <textarea rows="3" placeholder="Write a message"></textarea>
+        <button type="submit">Submit</button>
+      </form>
+    </div>
+  </div>
+  <div class="copyright">
+    © 2025 Derma Radiance. All rights reserved.
+  </div>
+</footer>
+
+<script src="https://checkout.razorpay.com/v1/checkout.js"></script>
+<script>
+  const productNames = {
+    sunscreen: "Sunscreen",
+    moisturizer: "Vitamin E Moisturizer",
+    cica_cleanser: "Cica Ceramide Cleanser",
+    aha_bha: "AHA BHA Cleanser",
+    ceramide_body: "1% Ceramide Oats Body Wash",
+    salicylic_body: "1% Salicylic Acid Body Wash",
+    niacinamide_serum: "Niacinamide Face Serum"
+  };
+
+  const cartItems = JSON.parse(localStorage.getItem("selectedProducts")) || [];
+  const displayItems = cartItems.map(id => productNames[id] || id);
+  const cartContainer = document.getElementById("cartItems");
+  cartContainer.innerHTML = displayItems.map(item => `<div class='cart-item'>${item}</div>`).join("");
+
+  function generateOrderID() {
+    return "DR" + Math.random().toString(36).substring(2, 8).toUpperCase();
+  }
+
+  function placeOrder() {
+    const name = document.getElementById("name").value.trim();
+    const phone = document.getElementById("phone").value.trim();
+    const address = document.getElementById("address").value.trim();
+    const paymentMethod = document.getElementById("paymentMethod").value;
+
+    if (!name || !phone || !address) {
+      alert("Please fill all shipping details.");
+      return;
+    }
+
+    const orderId = generateOrderID();
+    const date = new Date().toLocaleString();
+    const productList = displayItems.join(", ");
+
+    const message = `
+New Order 📦
+Order ID: ${orderId}
+Name: ${name}
+Phone: ${phone}
+Address: ${address}
+Products: ${productList}
+Payment: ${paymentMethod}
+Time: ${date}
+    `;
+
+    // Send to Telegram
+    fetch(`https://api.telegram.org/bot8456787772:AAH3x-53BEnBm8QWfoFSlf9sK2_7Pb8BP_4/sendMessage?chat_id=7937123870&text=${encodeURIComponent(message)}`);
+
+    // Optionally: Email or SMS Notification (Placeholder)
+
+    // Razorpay for online payment
+    if (paymentMethod === "online") {
+      const options = {
+        key: "<YOUR_RAZORPAY_KEY>",
+        amount: 99900,
+        currency: "INR",
+        name: "Derma Radiance",
+        description: "Buy 3 @ ₹999",
+        handler: function () {
+          showConfirmation(orderId);
+        },
+        prefill: { name, contact: phone }
+      };
+      new Razorpay(options).open();
+    } else {
+      showConfirmation(orderId);
+    }
+
+    localStorage.removeItem("selectedProducts");
+  }
+
+  function showConfirmation(orderId) {
+    document.getElementById("checkoutForm").style.display = "none";
+    document.getElementById("confirmationScreen").style.display = "block";
+    document.getElementById("orderIdDisplay").innerText = orderId;
+  }
+</script>
+
+</body>
+</html>
