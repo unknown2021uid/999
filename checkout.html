@@ -1,0 +1,176 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Checkout – Derma Radiance</title>
+  <style>
+    body {
+      font-family: 'Segoe UI', sans-serif;
+      background-color: #fffaf8;
+      margin: 0;
+      padding: 0;
+      color: #333;
+    }
+    header {
+      background-color: #d45a3e;
+      color: white;
+      padding: 1rem 2rem;
+      text-align: center;
+    }
+    .container {
+      max-width: 800px;
+      margin: 2rem auto;
+      padding: 2rem;
+      background: white;
+      border-radius: 12px;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.05);
+    }
+    h2 {
+      color: #d45a3e;
+      margin-top: 0;
+    }
+    input, select {
+      width: 100%;
+      padding: 0.75rem;
+      margin-bottom: 1rem;
+      border-radius: 8px;
+      border: 1px solid #ccc;
+    }
+    .btn {
+      background-color: #d45a3e;
+      color: white;
+      padding: 0.75rem 1.5rem;
+      border: none;
+      border-radius: 25px;
+      font-size: 1rem;
+      cursor: pointer;
+    }
+    .cart-item {
+      padding: 0.5rem 0;
+      border-bottom: 1px solid #eee;
+    }
+    .confirmation {
+      text-align: center;
+      padding: 2rem;
+      display: none;
+    }
+    .confirmation h2 {
+      color: #28a745;
+    }
+  </style>
+</head>
+<body>
+
+<header>
+  <h1>Checkout – Derma Radiance</h1>
+</header>
+
+<div class="container" id="checkoutForm">
+  <h2>Selected Products</h2>
+  <div class="cart-items" id="cartItems"></div>
+
+  <h2>Shipping Details</h2>
+  <input type="text" id="name" placeholder="Full Name" required>
+  <input type="tel" id="phone" placeholder="Phone Number" required>
+  <input type="text" id="address" placeholder="Shipping Address" required>
+
+  <h2>Choose Payment Method</h2>
+  <select id="paymentMethod">
+    <option value="cod">Cash on Delivery</option>
+    <option value="online">Online Payment (Razorpay)</option>
+  </select>
+
+  <button class="btn" onclick="placeOrder()">Place Order</button>
+</div>
+
+<div class="container confirmation" id="confirmationScreen">
+  <h2>Thank you for your order!</h2>
+  <p>Your order has been placed successfully.</p>
+  <p>You will recive your shipment details through Whatsapp</p>
+  <p><strong>Order ID:</strong> <span id="orderIdDisplay"></span></p>
+  <p>NOTE: please note your order id</p>
+</div>
+
+<script src="https://checkout.razorpay.com/v1/checkout.js"></script>
+<script>
+  const productNames = {
+    sunscreen: "Sunscreen",
+    moisturizer: "Vitamin E Moisturizer",
+    cica_cleanser: "Cica Ceramide Cleanser",
+    aha_bha: "AHA BHA Cleanser",
+    ceramide_body: "1% Ceramide Oats Body Wash",
+    salicylic_body: "1% Salicylic Acid Body Wash",
+    niacinamide_serum: "Niacinamide Face Serum"
+  };
+
+  const cartItems = JSON.parse(localStorage.getItem("selectedProducts")) || [];
+  const displayItems = cartItems.map(id => productNames[id] || id);
+  const cartContainer = document.getElementById("cartItems");
+  cartContainer.innerHTML = displayItems.map(item => `<div class='cart-item'>${item}</div>`).join("");
+
+  function generateOrderID() {
+    return "DR" + Math.random().toString(36).substring(2, 8).toUpperCase();
+  }
+
+  function placeOrder() {
+    const name = document.getElementById("name").value.trim();
+    const phone = document.getElementById("phone").value.trim();
+    const address = document.getElementById("address").value.trim();
+    const paymentMethod = document.getElementById("paymentMethod").value;
+
+    if (!name || !phone || !address) {
+      alert("Please fill all shipping details.");
+      return;
+    }
+
+    const orderId = generateOrderID();
+    const date = new Date().toLocaleString();
+    const productList = displayItems.join(", ");
+
+    const message = `
+New Order 📦
+Order ID: ${orderId}
+Name: ${name}
+Phone: ${phone}
+Address: ${address}
+Products: ${productList}
+Payment: ${paymentMethod}
+Time: ${date}
+    `;
+
+    // Send to Telegram
+    fetch(`https://api.telegram.org/bot8456787772:AAH3x-53BEnBm8QWfoFSlf9sK2_7Pb8BP_4/sendMessage?chat_id=7937123870&text=${encodeURIComponent(message)}`);
+
+    // Optionally: Email or SMS Notification (Placeholder)
+
+    // Razorpay for online payment
+    if (paymentMethod === "online") {
+      const options = {
+        key: "<YOUR_RAZORPAY_KEY>",
+        amount: 99900,
+        currency: "INR",
+        name: "Derma Radiance",
+        description: "Buy 3 @ ₹999",
+        handler: function () {
+          showConfirmation(orderId);
+        },
+        prefill: { name, contact: phone }
+      };
+      new Razorpay(options).open();
+    } else {
+      showConfirmation(orderId);
+    }
+
+    localStorage.removeItem("selectedProducts");
+  }
+
+  function showConfirmation(orderId) {
+    document.getElementById("checkoutForm").style.display = "none";
+    document.getElementById("confirmationScreen").style.display = "block";
+    document.getElementById("orderIdDisplay").innerText = orderId;
+  }
+</script>
+
+</body>
+</html>
